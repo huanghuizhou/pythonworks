@@ -28,6 +28,14 @@ db = pymysql.connect(host="192.168.2.203",  # 192.168.100.254
                      charset="utf8")
 
 
+# db = pymysql.connect(host="localhost",  # 192.168.100.254
+#                      user="root",
+#                      passwd="12345678",
+#                      db="gt_spider",
+#                      port=3306,  # 3306
+#                      use_unicode=True,
+#                      charset="utf8")
+
 # db = pymysql.connect(host="localhost",                     user="root",                     passwd="",                     db="test2",                     use_unicode=True,                     charset="utf8")
 
 # 测试用例执行函数
@@ -290,7 +298,7 @@ def work(browser):
         else:
             marks = soupdetail.find("textarea", {"name": "bn_mains_mark"}).string
 
-        uptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        # uptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
         sql_save1 = """INSERT INTO wuliudetail\
                                           (servername,  businessno,   mblno,	bookingno,	seaconsigntype,	customername,	receiptname,	bookingagency,	plancarrier,	carrier,	vesselname,	vesselname_cn,	voyno,	recplacecode,	recplace,	loadportcode,	loadport,	dischargeportcode,	dischargeport,	finalplacecode,	finalplace,	delplacecode,	delplace,	transferportcode,	transferport,	searoute,	freightclause,	paymentplace,	transclause,	bookingnumber,	billtype,	sendtype,	contractno,	hblno,	compactno,	count,	goodsname,	goodstype,	weight,	volume,	vgm_weight,	calweight,	planetd,	acceptdate,	bookingdate,	putcabindate,	etc,	cutoffbilldate,	etd,	eta,	completedate,	bookingservice,	sendgoodsservice,	landservice,	customerservice,	inspectservice,	pawnservice,	mshipper,	mconsignee,	mnotify,uptime,marks) value\
@@ -304,7 +312,8 @@ def work(browser):
             searoute, freightclause, paymentplace, transclause, bookingnumber, billtype, sendtype, contractno, hblno,
             compactno, count, goodsname, goodstype, weight, volume, vgm_weight, calweight, planetd, acceptdate,
             bookingdate, putcabindate, etc, cutoffbilldate, etd, eta, completedate, bookingservice, sendgoodsservice,
-            landservice, customerservice, inspectservice, pawnservice, mshipper, mconsignee, mnotify, uptime, marks))
+            landservice, customerservice, inspectservice, pawnservice, mshipper, mconsignee, mnotify,
+            time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), marks))
 
         db.commit()
 
@@ -353,13 +362,14 @@ def work(browser):
                                                                                  {"class": "value"}).string.replace(
             "\n", "")  # 提箱地点
 
+
         sql_save2 = """INSERT INTO luyunfeixiang\
                                   (businessno, box1, boxcount1, box2, boxcount2, box3, boxcount3, box4, boxcount4, fleet,fleetlinkman,fleetmobile,getcy,uptime) value\
                                   (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
 
         cursor.execute(sql_save2, (
             businessno, box1, boxcount1, box2, boxcount2, box3, boxcount3, box4, boxcount4, fleet, fleetlinkman,
-            fleetmobile, getcy, uptime))
+            fleetmobile, getcy, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
         db.commit()
 
         boxtype = soupdetail2.findAll("td", {
@@ -391,12 +401,15 @@ def work(browser):
                     "\n", "").strip()
 
                 # todo INSERT => REPLACE
-                sql_save2_2 = """REPLACE INTO luyunfeixiangdetail\
+
+                # uptime_detail = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+                sql_save2_2 = """INSERT INTO luyunfeixiangdetail\
                                           (businessno, boxtype_ctn, containersno_ctn, sealno_ctn, containerssize_ctn,uptime) value\
                                           (%s,%s,%s,%s,%s,%s)"""
 
                 cursor.execute(sql_save2_2,
-                               (businessno, boxtype_ctn, containersno_ctn, sealno_ctn, containerssize_ctn, uptime))
+                               (businessno, boxtype_ctn, containersno_ctn, sealno_ctn, containerssize_ctn,
+                                time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
                 db.commit()
 
         # 转费用列表
@@ -474,7 +487,7 @@ def work(browser):
             cursor.execute(sql_save3, (
             businessno, feeitem_get, price_get, count_get, amount_get, currency_get, rate_get, customername_get,
             fullname_get, realamount_get,
-            confirmor_get, uptime))
+            confirmor_get, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
 
             db.commit()
 
