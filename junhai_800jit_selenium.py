@@ -313,7 +313,7 @@ def work(browser):
             compactno, count, goodsname, goodstype, weight, volume, vgm_weight, calweight, planetd, acceptdate,
             bookingdate, putcabindate, etc, cutoffbilldate, etd, eta, completedate, bookingservice, sendgoodsservice,
             landservice, customerservice, inspectservice, pawnservice, mshipper, mconsignee, mnotify,
-            time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), marks))
+            datetime.datetime.now(), marks))
 
         db.commit()
 
@@ -369,7 +369,7 @@ def work(browser):
 
         cursor.execute(sql_save2, (
             businessno, box1, boxcount1, box2, boxcount2, box3, boxcount3, box4, boxcount4, fleet, fleetlinkman,
-            fleetmobile, getcy, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
+            fleetmobile, getcy, datetime.datetime.now()))
         db.commit()
 
         boxtype = soupdetail2.findAll("td", {
@@ -409,7 +409,7 @@ def work(browser):
 
                 cursor.execute(sql_save2_2,
                                (businessno, boxtype_ctn, containersno_ctn, sealno_ctn, containerssize_ctn,
-                                time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
+                                datetime.datetime.now()))
                 db.commit()
 
         # 转费用列表
@@ -485,9 +485,9 @@ def work(browser):
                         """
 
             cursor.execute(sql_save3, (
-            businessno, feeitem_get, price_get, count_get, amount_get, currency_get, rate_get, customername_get,
-            fullname_get, realamount_get,
-            confirmor_get, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))))
+                businessno, feeitem_get, price_get, count_get, amount_get, currency_get, rate_get, customername_get,
+                fullname_get, realamount_get,
+                confirmor_get, datetime.datetime.now()))
 
             db.commit()
 
