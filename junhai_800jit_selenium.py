@@ -12,20 +12,22 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 # 打开数据库链接
-# db = pymysql.connect(host="121.201.69.46",#192.168.100.254
-#                      user="gtdata",
-#                      passwd="Admin@123",
-#                      db="Spide_800jit_logistics",
-#                      port=23306,#3306
-#                      use_unicode=True,
-#                      charset="utf8")
-db = pymysql.connect(host="192.168.2.203",  # 192.168.100.254
-                     user="gt_user",
-                     passwd="greatTao1314!@#$",
-                     db="gt_spider",
-                     port=3306,  # 3306
+db = pymysql.connect(host="121.201.69.46",  # 192.168.100.254
+                     user="gtdata",
+                     passwd="Admin@123",
+                     db="Spide_800jit_logistics",
+                     port=23306,  # 3306
                      use_unicode=True,
                      charset="utf8")
+
+
+# db = pymysql.connect(host="192.168.2.203",  # 192.168.100.254
+#                      user="gt_user",
+#                      passwd="greatTao1314!@#$",
+#                      db="gt_spider",
+#                      port=3306,  # 3306
+#                      use_unicode=True,
+#                      charset="utf8")
 
 
 # db = pymysql.connect(host="localhost",  # 192.168.100.254
@@ -53,7 +55,7 @@ def work(browser):
         # 点击按钮提交登录表单
         browser.find_element_by_name("submit1").click()
         # browser.send_keys(Keys.RETURN)
-        time.sleep(random.random() * 1)
+        time.sleep(5)
 
         # 验证登录成功的url
         currUrl = browser.current_url
@@ -61,6 +63,7 @@ def work(browser):
             print("success")
         else:
             print("failure1")
+            print(browser.page_source)
             # writeLog()
 
     except:
