@@ -19,22 +19,23 @@ from selenium.webdriver.chrome.options import Options
 #                      port=23306,#3306
 #                      use_unicode=True,
 #                      charset="utf8")
-db = pymysql.connect(host="192.168.2.203",  # 192.168.100.254
-                     user="gt_user",
-                     passwd="greatTao1314!@#$",
-                     db="gt_spider",
-                     port=3306,  # 3306
-                     use_unicode=True,
-                     charset="utf8")
 
-
-# db = pymysql.connect(host="localhost",  # 192.168.100.254
-#                      user="root",
-#                      passwd="12345678",
+# db = pymysql.connect(host="192.168.2.203",  # 192.168.100.254
+#                      user="gt_user",
+#                      passwd="greatTao1314!@#$",
 #                      db="gt_spider",
 #                      port=3306,  # 3306
 #                      use_unicode=True,
 #                      charset="utf8")
+
+
+db = pymysql.connect(host="localhost",  # 192.168.100.254
+                     user="root",
+                     passwd="12345678",
+                     db="gt_spider",
+                     port=3306,  # 3306
+                     use_unicode=True,
+                     charset="utf8")
 
 
 # 日志
@@ -68,10 +69,18 @@ def work(browser):
         # 点击按钮提交登录表单
         browser.find_element_by_name("submit1").click()
         # browser.send_keys(Keys.RETURN)
-        time.sleep(5)
+        time.sleep(3)
 
         # 验证登录成功的url
         currUrl = browser.current_url
+
+        # 可能登录成功还是在登录页面，需点击登录
+        if currUrl == url:
+            browser.find_element_by_id("directInto").click()
+            time.sleep(2)
+            currUrl = browser.current_url
+
+        # 验证登录成功的url
         if currUrl == "http://saas.800jit.com/modelhome/applogin":
             print("success")
         else:
@@ -83,6 +92,7 @@ def work(browser):
     except:
         print("failure2")
         print(traceback.format_exc())
+        return
         # writeLog()
     # 需要完成Java
     # browser.switch_to_frame('content')
