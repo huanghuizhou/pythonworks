@@ -12,22 +12,20 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 # 打开数据库链接
-db = pymysql.connect(host="121.201.69.46",  # 192.168.100.254
-                     user="gtdata",
-                     passwd="Admin@123",
-                     db="Spide_800jit_logistics",
-                     port=23306,  # 3306
-                     use_unicode=True,
-                     charset="utf8")
-
-
-# db = pymysql.connect(host="192.168.2.203",  # 192.168.100.254
-#                      user="gt_user",
-#                      passwd="greatTao1314!@#$",
-#                      db="gt_spider",
-#                      port=3306,  # 3306
+# db = pymysql.connect(host="121.201.69.46",#192.168.100.254
+#                      user="gtdata",
+#                      passwd="Admin@123",
+#                      db="Spide_800jit_logistics",
+#                      port=23306,#3306
 #                      use_unicode=True,
 #                      charset="utf8")
+db = pymysql.connect(host="192.168.2.203",  # 192.168.100.254
+                     user="gt_user",
+                     passwd="greatTao1314!@#$",
+                     db="gt_spider",
+                     port=3306,  # 3306
+                     use_unicode=True,
+                     charset="utf8")
 
 
 # db = pymysql.connect(host="localhost",  # 192.168.100.254
@@ -38,20 +36,35 @@ db = pymysql.connect(host="121.201.69.46",  # 192.168.100.254
 #                      use_unicode=True,
 #                      charset="utf8")
 
-# db = pymysql.connect(host="localhost",                     user="root",                     passwd="",                     db="test2",                     use_unicode=True,                     charset="utf8")
+
+# 日志
+def get_logger(name):
+    log = logging.getLogger(name)
+    log.setLevel(logging.DEBUG)
+
+    # Standard output handler
+    sh = logging.StreamHandler()
+    sh.setLevel(logging.DEBUG)
+    sh.setFormatter(logging.Formatter('%(levelname)s - %(name)s:%(lineno)s: %(message)s'))
+    log.addHandler(sh)
+    return log
+
+
+logger = get_logger(__file__)
+
 
 # 测试用例执行函数
 def work(browser):
     cursor = db.cursor()
     url = "http://saas.800jit.com/serviceportal/application/common/jsp/netbusiness.jsp"
     browser.get(url)
+    time.sleep(2)
     browser.switch_to_frame('loginEntry1')  # Frame/Iframe定位
     try:
         # 输入账号和密码
         browser.find_element_by_name("username").send_keys('546193')
         browser.find_element_by_id("password").send_keys('gt0818')
         time.sleep(2)
-
         # 点击按钮提交登录表单
         browser.find_element_by_name("submit1").click()
         # browser.send_keys(Keys.RETURN)
@@ -64,6 +77,7 @@ def work(browser):
         else:
             print("failure1")
             print(browser.page_source)
+            return
             # writeLog()
 
     except:
@@ -301,24 +315,31 @@ def work(browser):
         else:
             marks = soupdetail.find("textarea", {"name": "bn_mains_mark"}).string
 
-        # uptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        uptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
         sql_save1 = """INSERT INTO wuliudetail\
                                           (servername,  businessno,   mblno,	bookingno,	seaconsigntype,	customername,	receiptname,	bookingagency,	plancarrier,	carrier,	vesselname,	vesselname_cn,	voyno,	recplacecode,	recplace,	loadportcode,	loadport,	dischargeportcode,	dischargeport,	finalplacecode,	finalplace,	delplacecode,	delplace,	transferportcode,	transferport,	searoute,	freightclause,	paymentplace,	transclause,	bookingnumber,	billtype,	sendtype,	contractno,	hblno,	compactno,	count,	goodsname,	goodstype,	weight,	volume,	vgm_weight,	calweight,	planetd,	acceptdate,	bookingdate,	putcabindate,	etc,	cutoffbilldate,	etd,	eta,	completedate,	bookingservice,	sendgoodsservice,	landservice,	customerservice,	inspectservice,	pawnservice,	mshipper,	mconsignee,	mnotify,uptime,marks) value\
                                           (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
 
-        cursor.execute(sql_save1, (
-            companyname, businessno, mblno, bookingno, seaconsigntype, customername, receiptname, bookingagency,
-            plancarrier, carrier,
-            vesselname, vesselname_cn, voyno, recplacecode, recplace, loadportcode, loadport, dischargeportcode,
-            dischargeport, finalplacecode, finalplace, delplacecode, delplace, transferportcode, transferport,
-            searoute, freightclause, paymentplace, transclause, bookingnumber, billtype, sendtype, contractno, hblno,
-            compactno, count, goodsname, goodstype, weight, volume, vgm_weight, calweight, planetd, acceptdate,
-            bookingdate, putcabindate, etc, cutoffbilldate, etd, eta, completedate, bookingservice, sendgoodsservice,
-            landservice, customerservice, inspectservice, pawnservice, mshipper, mconsignee, mnotify,
-            datetime.datetime.now(), marks))
+        try:
+            cursor.execute(sql_save1, (
+                companyname, businessno, mblno, bookingno, seaconsigntype, customername, receiptname, bookingagency,
+                plancarrier, carrier,
+                vesselname, vesselname_cn, voyno, recplacecode, recplace, loadportcode, loadport, dischargeportcode,
+                dischargeport, finalplacecode, finalplace, delplacecode, delplace, transferportcode, transferport,
+                searoute, freightclause, paymentplace, transclause, bookingnumber, billtype, sendtype, contractno,
+                hblno,
+                compactno, count, goodsname, goodstype, weight, volume, vgm_weight, calweight, planetd, acceptdate,
+                bookingdate, putcabindate, etc, cutoffbilldate, etd, eta, completedate, bookingservice,
+                sendgoodsservice,
+                landservice, customerservice, inspectservice, pawnservice, mshipper, mconsignee, mnotify,
+                uptime, marks))
 
-        db.commit()
+            db.commit()
+        except Exception as e:
+            logger.warning('Failed to insert into wuliudetail sql is %s' % sql_save1, e)
+            print('Failed to insert into wuliudetail sql is %s' % sql_save1, e)
+            time.sleep(5)
 
         # 转跳分箱
         geturl2 = "http://saas.800jit.com/modelhome/applogin?handler=context&option=getPage&modelid=business&casenumber=" + businessno_urllink + "&page=pg_setruck0&pagekey=business"
@@ -365,15 +386,19 @@ def work(browser):
                                                                                  {"class": "value"}).string.replace(
             "\n", "")  # 提箱地点
 
-
         sql_save2 = """INSERT INTO luyunfeixiang\
                                   (businessno, box1, boxcount1, box2, boxcount2, box3, boxcount3, box4, boxcount4, fleet,fleetlinkman,fleetmobile,getcy,uptime) value\
                                   (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
 
-        cursor.execute(sql_save2, (
-            businessno, box1, boxcount1, box2, boxcount2, box3, boxcount3, box4, boxcount4, fleet, fleetlinkman,
-            fleetmobile, getcy, datetime.datetime.now()))
-        db.commit()
+        try:
+            cursor.execute(sql_save2, (
+                businessno, box1, boxcount1, box2, boxcount2, box3, boxcount3, box4, boxcount4, fleet, fleetlinkman,
+                fleetmobile, getcy, uptime))
+            db.commit()
+        except Exception as e:
+            logger.warning('Failed to insert into luyunfeixiang sql is %s' % sql_save2, e)
+            print('Failed to insert into luyunfeixiang sql is %s' % sql_save2, e)
+            time.sleep(5)
 
         boxtype = soupdetail2.findAll("td", {
             "class": "vrws-row-value", "elementname": "sp_seacontainers:bn_containers_ctntype"
@@ -405,15 +430,20 @@ def work(browser):
 
                 # todo INSERT => REPLACE
 
-                # uptime_detail = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
                 sql_save2_2 = """INSERT INTO luyunfeixiangdetail\
                                           (businessno, boxtype_ctn, containersno_ctn, sealno_ctn, containerssize_ctn,uptime) value\
                                           (%s,%s,%s,%s,%s,%s)"""
 
-                cursor.execute(sql_save2_2,
-                               (businessno, boxtype_ctn, containersno_ctn, sealno_ctn, containerssize_ctn,
-                                datetime.datetime.now()))
-                db.commit()
+                try:
+                    cursor.execute(sql_save2_2,
+                                   (businessno, boxtype_ctn, containersno_ctn, sealno_ctn, containerssize_ctn,
+                                    uptime))
+                    db.commit()
+                except Exception as e:
+                    logger.warning('Failed to insert into luyunfeixiangdetail sql is %s' % sql_save2_2, e)
+                    print('Failed to insert into luyunfeixiangdetail sql is %s' % sql_save2_2, e)
+                    time.sleep(5)
+                    continue
 
         # 转费用列表
         geturl3 = "http://saas.800jit.com/modelhome/applogin?handler=context&option=getPage&modelid=business&casenumber=" + businessno_urllink + "&page=pg_fee_apply&pagekey=business"
@@ -487,12 +517,17 @@ def work(browser):
                           (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                         """
 
-            cursor.execute(sql_save3, (
-                businessno, feeitem_get, price_get, count_get, amount_get, currency_get, rate_get, customername_get,
-                fullname_get, realamount_get,
-                confirmor_get, datetime.datetime.now()))
+            try:
+                cursor.execute(sql_save3, (
+                    businessno, feeitem_get, price_get, count_get, amount_get, currency_get, rate_get, customername_get,
+                    fullname_get, realamount_get,
+                    confirmor_get, uptime))
 
-            db.commit()
+                db.commit()
+            except Exception as e:
+                logger.warning('Failed to insert into feiyongshouru sql is %s' % sql_save3, e)
+                print('Failed to insert into feiyongshouru sql is %s' % sql_save3, e)
+                time.sleep(5)
 
     db.commit()
     db.close()
