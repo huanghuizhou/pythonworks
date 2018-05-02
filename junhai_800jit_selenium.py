@@ -12,13 +12,13 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 # 打开数据库链接
-# db = pymysql.connect(host="121.201.69.46",#192.168.100.254
-#                      user="gtdata",
-#                      passwd="Admin@123",
-#                      db="Spide_800jit_logistics",
-#                      port=23306,#3306
-#                      use_unicode=True,
-#                      charset="utf8")
+db = pymysql.connect(host="121.201.69.46",  # 192.168.100.254
+                     user="gtdata",
+                     passwd="Admin@123",
+                     db="Spide_800jit_logistics",
+                     port=23306,  # 3306
+                     use_unicode=True,
+                     charset="utf8")
 
 # db = pymysql.connect(host="192.168.2.203",  # 192.168.100.254
 #                      user="gt_user",
@@ -29,13 +29,13 @@ from selenium.webdriver.chrome.options import Options
 #                      charset="utf8")
 
 
-db = pymysql.connect(host="localhost",  # 192.168.100.254
-                     user="root",
-                     passwd="12345678",
-                     db="gt_spider",
-                     port=3306,  # 3306
-                     use_unicode=True,
-                     charset="utf8")
+# db = pymysql.connect(host="localhost",  # 192.168.100.254
+#                      user="root",
+#                      passwd="12345678",
+#                      db="gt_spider",
+#                      port=3306,  # 3306
+#                      use_unicode=True,
+#                      charset="utf8")
 
 
 # 日志
@@ -63,8 +63,8 @@ def work(browser):
     browser.switch_to_frame('loginEntry1')  # Frame/Iframe定位
     try:
         # 输入账号和密码
-        browser.find_element_by_name("username").send_keys('546193')
-        browser.find_element_by_id("password").send_keys('gt0818')
+        browser.find_element_by_name("username").send_keys('546195')
+        browser.find_element_by_id("password").send_keys('87172080')
         time.sleep(2)
         # 点击按钮提交登录表单
         browser.find_element_by_name("submit1").click()
