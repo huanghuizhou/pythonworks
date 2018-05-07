@@ -489,13 +489,17 @@ def work(browser):
         fullname = soupdetail3.findAll("td", {
             "class": "vrws-row-value", "elementname": "sp_receipt_apply:bn_receipts_fullname"
         })  # 发票抬头
-        realamount = soupdetail3.findAll("td", {
-            "class": "vrws-row-value", "elementname": "sp_receipt_apply:bn_receipts_realamount"
-        })  # 实收
-        confirmor = soupdetail3.findAll("td", {
-            "class": "vrws-row-value", "elementname": "sp_receipt_apply:bn_receipts_confirmor"
-        })  # 费用确认人
 
+        # realamount = soupdetail3.findAll("td", {
+        #     "class": "vrws-row-value", "elementname": "sp_receipt_apply:bn_receipts_realamount"
+        # })  # 实收
+        # confirmor = soupdetail3.findAll("td", {
+        #     "class": "vrws-row-value", "elementname": "sp_receipt_apply:bn_receipts_confirmor"
+        # })  # 费用确认人
+
+        moreInfo = soupdetail3.findAll("td", {
+            "class": "vrws-row-value", "elementname": "sp_receipt_apply:bn_receipts_more"
+        })  # 更多信息
         for i in range(len(feeitem)):
             # feeitem_get = feeitem[i].string.replace("\n", "").strip()
             # price_get = price[i].string.replace("\n", "").strip()
@@ -508,8 +512,9 @@ def work(browser):
             # realamount_get = realamount[i].string.replace("\n", "").strip()
             # confirmor_get = confirmor[i].string.replace("\n", "").strip()
 
-            if confirmor[i].string.replace("\n", "").strip() == "":
-                continue
+            # if confirmor[i].string.replace("\n", "").strip() == "":
+            #     continue
+
             feeitem_get = feeitem[i].string.replace("\n", "").strip()
             price_get = price[i].string.replace("\n", "").replace(",", "").strip()
             count_get = count[i].string.replace("\n", "").strip()
@@ -518,9 +523,18 @@ def work(browser):
             rate_get = rate[i].string.replace("\n", "").strip()
             customername_get = customername[i].string.replace("\n", "").strip()
             fullname_get = fullname[i].string.replace("\n", "").strip()
-            realamount_get = realamount[i].string.replace("\n", "").strip()
-            confirmor_get = confirmor[i].string.replace("\n", "").strip()
 
+            # 实收数据没有
+            # realamount_get = realamount[i].string.replace("\n", "").strip()
+
+            # 更多信息页面
+            moreStr = moreInfo[i].find("a").get('href')
+            moreInfoUrl = moreStr[moreStr.find("http"):moreStr.find("',")]
+            browser.get(moreInfoUrl)
+            html5 = browser.execute_script("return document.documentElement.outerHTML")
+            soupdetail4 = BeautifulSoup(html5, "lxml")
+            confirmor_get = soupdetail4.find("tr", {"elementname": "bn_receipts_confirmor"}).find("td", {
+                "class": "vrws-value"}).string.replace("\n", "").strip()
             # 插入数据库
             sql_save3 = """INSERT INTO feiyongshouru\
                           (businessno, feeitem, price, counta, amount, currency, rate, customername, fullname, realamount,confirmor,uptime) value\
@@ -530,7 +544,7 @@ def work(browser):
             try:
                 cursor.execute(sql_save3, (
                     businessno, feeitem_get, price_get, count_get, amount_get, currency_get, rate_get, customername_get,
-                    fullname_get, realamount_get,
+                    fullname_get, '',
                     confirmor_get, uptime))
 
                 db.commit()
